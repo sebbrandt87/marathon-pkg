@@ -62,7 +62,15 @@ el: el6 el7
 fedora: fedora20 fedora21 fedora22
 
 .PHONY: ubuntu
-ubuntu: ubuntu-precise ubuntu-trusty ubuntu-xenial
+ubuntu: ubuntu-precise \
+				ubuntu-quantal \
+				ubuntu-raring \
+				ubuntu-saucy \
+				ubuntu-trusty \
+				ubuntu-utopic \
+				ubuntu-vivid \
+				ubuntu-xenial \
+				ubuntu-yakkety
 
 .PHONY: debian
 debian: debian-jessie
@@ -181,6 +189,15 @@ ubuntu-xenial: marathon.systemd.postinst
 		--after-install marathon.systemd.postinst \
 		$(FPM_OPTS_DEB) $(FPM_OPTS) .
 
+.PHONY: ubuntu-yakkety
+ubuntu-yakkety: toor/ubuntu-yakkety/lib/systemd/system/marathon.service
+ubuntu-yakkety: toor/ubuntu-yakkety/$(PREFIX)/bin/marathon
+ubuntu-yakkety: marathon.systemd.postinst
+	fpm -C toor/ubuntu-yakkety --config-files lib/systemd/system/marathon.service \
+		--iteration $(PKG_REL).ubuntu1610 \
+		--after-install marathon.systemd.postinst \
+		$(FPM_OPTS_DEB) $(FPM_OPTS) .
+
 .PHONY: debian-wheezy-77
 debian-wheezy-77: toor/debian-wheezy-77/etc/init/marathon.conf
 debian-wheezy-77: toor/debian-wheezy-77/etc/init.d/marathon
@@ -198,7 +215,6 @@ debian-jessie-81: marathon.systemd.postinst
 		--iteration $(PKG_REL).debian81 \
 		--after-install marathon.systemd.postinst \
 		$(FPM_OPTS_DEB) $(FPM_OPTS) .
-
 
 .PHONY: osx
 osx: toor/osx/$(PREFIX)/bin/marathon
@@ -245,4 +261,3 @@ prep-ubuntu:
 	sudo dpkg -i $(SBT_TMP)
 	rm $(SBT_TMP)
 	sudo gem install fpm
-
